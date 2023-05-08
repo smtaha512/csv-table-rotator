@@ -35,6 +35,13 @@ function rotate(table: TwoDTable = []): TwoDTable {
   let rotatedTable = generateIntial2DTableForRotation(table);
 
   for (let i = 0; i < table.length; i++) {
+    for (let j = i; j < table[i].length - i - 1; j++) {
+      const index = i < table.length / 2 ? j + 1 : table[i].length - j;
+      rotatedTable[i][index] = table[i][j];
+    }
+  }
+
+  for (let i = 0; i < table.length; i++) {
     let lastItem = null;
     for (let j = 0; j < table[i].length; j++) {
       if (j === table[i].length - 1) {
