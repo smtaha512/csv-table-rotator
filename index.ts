@@ -1,4 +1,7 @@
-const table = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const table = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  22, 23, 24,
+];
 
 type UniDimensionalTable = number[];
 type TwoDTable = UniDimensionalTable[];
@@ -34,25 +37,28 @@ function generateIntial2DTableForRotation(table: TwoDTable): TwoDTable {
 function rotate(table: TwoDTable = []): TwoDTable {
   let rotatedTable = generateIntial2DTableForRotation(table);
 
-  for (let i = 0; i < table.length; i++) {
-    for (let j = i; j < table[i].length - i - 1; j++) {
-      const index = i < table.length / 2 ? j + 1 : table[i].length - j;
+  for (let i = 0; i < table.length / 2; i++) {
+    rotatedTable[i][0] = table[i + 1][0];
+
+    for (let j = 0; j < table.length - i - 1; j++) {
+      const index = i < Math.floor(table.length / 2) ? j + 1 : j - table.length;
       rotatedTable[i][index] = table[i][j];
     }
+
+    rotatedTable[i + 1][table.length - 1] = table[i][table.length - 1];
   }
 
-  for (let i = 0; i < table.length; i++) {
-    let lastItem = null;
-    for (let j = 0; j < table[i].length; j++) {
-      if (j === table[i].length - 1) {
-        lastItem = table[i][j];
-        break;
-      }
-      rotatedTable[i][j + 1] = table[i][j];
-    }
+  if (table.length % 2 > 0) {
+    let midPoint = Math.floor(table.length / 2);
+    rotatedTable[midPoint][midPoint] = table[midPoint][midPoint];
+  }
 
-    const positionForAddingLastItem = i === table.length - 1 ? 0 : i + 1;
-    rotatedTable[positionForAddingLastItem][0] = lastItem;
+  for (let i = Math.ceil(table.length / 2); i < table.length; i++) {
+    for (let j = table.length - 1; j > 0; j--) {
+      const index = i < Math.floor(table.length / 2) ? j + 1 : j - table.length;
+      rotatedTable[i][-index - 1] = table[i][-index];
+    }
+    rotatedTable[i][table.length - 1] = table[i - 1][table.length - 1];
   }
 
   return rotatedTable;
@@ -68,5 +74,43 @@ function flat(table: TwoDTable): UniDimensionalTable {
 
   return flattenedTable;
 }
+// rotate([...to2DTable(table)]).forEach((item) => console.log(item));
+// console.log(flat(rotate([...to2DTable(table)])));
 
-console.log(flat(rotate([...to2DTable(table)])));
+function rotateTable(table: UniDimensionalTable): UniDimensionalTable {
+  let rotatedTable = table.map((_) => NaN);
+  const sqrt = tableLengthSquareRoot(table);
+
+  for (let j = 0; j < sqrt / 2 - 1; j++) {
+    for (let i = 0; i < table.length; i++) {
+      // if (i + j !== table.length - 1 && (i + j + 1) % sqrt === 0) {
+      //   rotatedTable[i + j + sqrt] = table[i];
+      // }
+
+      // Moving first item of current to first item of previous
+      if (i - j !== 0 && (i - j) % sqrt === 0) {
+        rotatedTable[i - sqrt] = table[i];
+      }
+
+      // if (i < table.length / 2 && !((i + 1) % sqrt === 0 && i % sqrt === 0)) {
+      //   rotatedTable[i + 1] = table[i];
+      // }
+    }
+  }
+
+  for (let i = 0; i < table.length; i++) {
+    // if (i !== table.length - 1 && (i + 1) % sqrt === 0) {
+    //   rotatedTable[i + sqrt] = table[i];
+    // }
+    // if (i !== 0 && i % sqrt === 0) {
+    //   rotatedTable[i - sqrt] = table[i];
+    // }
+    // if (i < table.length / 2 && !((i + 1) % sqrt === 0 && i % sqrt === 0)) {
+    //   rotatedTable[i + 1] = table[i];
+    // }
+  }
+
+  return rotatedTable;
+}
+
+console.log(rotateTable(table));
